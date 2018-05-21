@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.springframework.stereotype.Service;
 
+import com.shirsho.contactbookproject.Exceptions.ContactBusinessException;
 import com.shirsho.contactbookproject.model.Contact;
 import com.shirsho.contactbookproject.services.ContactService;
 
@@ -58,6 +60,10 @@ public class ContactServiceImpl implements ContactService {
 	@Override
 	public Contact getContact(long contactSequenceNumber) {
 		
+		if(contacts.get(contactSequenceNumber)==null) {
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		}
+		
 		return contacts.get(contactSequenceNumber);
 	} 
 	
@@ -82,7 +88,8 @@ public class ContactServiceImpl implements ContactService {
 			response=Response.ok().build();
 		}
 		else {
-			response=Response.notModified().build();
+			//response=Response.notModified().build();
+			throw new ContactBusinessException();
 		}
 		return response;
 	}
@@ -105,7 +112,7 @@ public class ContactServiceImpl implements ContactService {
 	}
 
 	@Override
-	public List<Contact> getContactFromPhone(String homePhone) {
+	public List<Contact> getContactFromPhone(String Phone) {
 		int currentSequence=0;
 		
 		Contact response=null;
@@ -115,8 +122,9 @@ public class ContactServiceImpl implements ContactService {
 		
 		
 		while(currentSequence<resultArray.size()||response==null) {
-			String currentPhone=(resultArray.get(currentSequence)).getHomePhone();
-			if(currentPhone.equals(homePhone)) {
+			String currentHomePhone=(resultArray.get(currentSequence)).getHomePhone();
+			String currentWorkPhone=(resultArray.get(currentSequence)).getWorkPhone();
+			if(currentHomePhone.equals(Phone)||currentWorkPhone.equals(Phone)) {
 				response=resultArray.get(currentSequence);
 				responseArray.add(response);
 			}

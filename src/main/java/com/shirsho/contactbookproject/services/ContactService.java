@@ -34,7 +34,7 @@ public interface ContactService {
 	//Retrieve contacts by searching with phone number
 	@Path("/contacts/phoneno")
 	@POST
-	List<Contact> getContactFromPhone(String homePhone);
+	List<Contact> getContactFromPhone(String Phone);
 	
 	@Path("/contacts/city")
 	@POST
